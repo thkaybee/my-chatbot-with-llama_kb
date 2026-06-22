@@ -2,7 +2,26 @@
 
 A fine-tuned Llama 3.1 8B model that determines whether a user query is related to chemical science and returns a machine-readable JSON response.
 
-This project was developed as part of the Manning LiveProject: Fine-Tune and Deploy a Validator LLM.
+This project was developed as part of a complete LLM workflow covering dataset creation, supervised fine-tuning, model quantization, deployment, and API serving.
+
+---
+
+## Architecture
+
+```text
+User Query
+    │
+    ▼
+Chemistry Validator LLM
+    │
+    ├── valid = true
+    │       ▼
+    │   Chemistry Assistant
+    │
+    └── valid = false
+            ▼
+       Reject Query
+```
 
 ---
 
@@ -13,17 +32,68 @@ The goal of this project is to create a lightweight validator model that classif
 - Valid Chemistry Questions
 - Invalid / Non-Chemistry Questions
 
-The model responds with structured JSON output.
+The model responds with structured JSON output that can be consumed by applications and APIs.
 
-### Example
+---
 
-#### Input
+## Dataset Creation
+
+A supervised fine-tuning dataset was created using the Alpaca instruction format.
+
+Dataset contains:
+
+- Chemistry questions
+- Politics questions
+- General knowledge questions
+- Non-chemistry statements
+
+### Dataset Repository
+
+https://huggingface.co/datasets/thkaybee/chemistry-validator-dataset
+
+### Example Dataset Record
+
+```json
+{
+  "instruction": "Determine if the input is a question related to chemical science...",
+  "input": "Can elements be broken down into simpler substances?",
+  "output": "{'valid': true}"
+}
+```
+
+---
+
+## Fine-Tuning
+
+### Base Model
+
+Meta Llama 3.1 8B Instruct
+
+### Framework
+
+- Unsloth
+- LoRA (Low Rank Adaptation)
+- Google Colab Tesla T4 GPU
+
+### Training Configuration
+
+- 933 training examples
+- 60 training steps
+- GGUF export support
+
+---
+
+## Results
+
+### Example 1
+
+Input:
 
 ```text
 Can elements be broken down into simpler substances?
 ```
 
-#### Output
+Output:
 
 ```json
 {
@@ -31,13 +101,15 @@ Can elements be broken down into simpler substances?
 }
 ```
 
-#### Input
+### Example 2
+
+Input:
 
 ```text
 Was Donald Trump a good president?
 ```
 
-#### Output
+Output:
 
 ```json
 {
@@ -48,86 +120,49 @@ Was Donald Trump a good president?
 
 ---
 
-## Project Workflow
+## Model Export
 
-### 1. Dataset Creation
-
-Created a supervised fine-tuning dataset using the Alpaca instruction format.
-
-Dataset contains:
-
-- Chemistry-related questions
-- Politics questions
-- General knowledge questions
-- Non-chemistry statements
-
-Example dataset record:
-
-```json
-{
-  "instruction": "Determine if the input is a question related to chemical science...",
-  "input": "Can elements be broken down into simpler substances?",
-  "output": "{'valid': true}"
-}
-```
-
-### Dataset Repository
-
-https://huggingface.co/datasets/thkaybee/chemistry-validator-dataset
-
----
-
-### 2. Fine-Tuning
-
-Base Model:
-
-- Llama 3.1 8B Instruct
-
-Fine-Tuning Framework:
-
-- Unsloth
-- LoRA (Low Rank Adaptation)
-- Google Colab Tesla T4 GPU
-
-Training Configuration:
-
-- 933 training examples
-- 60 training steps
-- GGUF export support
-
----
-
-### 3. Model Export
-
-Exported GGUF formats:
+Exported GGUF Formats:
 
 - Q4_K_M
 - Q5_K_M
 - Q8_0
 
-Model Repository:
+### Hugging Face Model Repository
 
 https://huggingface.co/thkaybee/chemistry-validator-llama
 
 ---
 
-### 4. Deployment
+## Deployment
 
-The fine-tuned model was deployed using:
+The model was deployed using:
 
 - GaiaNet
 - WasmEdge
 - LlamaEdge
 
-Public Deployment:
+### Public Deployment
 
 https://0x225c8b3c4525e6e06fc0e50d2f90d7e8731ecc7e.gaia.domains
 
+### Local API
+
+```text
+http://localhost:9068/v1/chat/completions
+```
+
+### Local Chatbot UI
+
+```text
+http://localhost:8080/chatbot-ui/index.html
+```
+
 ---
 
-## API Usage
+## API Example
 
-### Example Request
+### Request
 
 ```bash
 curl -X POST http://localhost:9068/v1/chat/completions \
@@ -146,7 +181,7 @@ curl -X POST http://localhost:9068/v1/chat/completions \
 }'
 ```
 
-### Example Response
+### Response
 
 ```json
 {
@@ -157,20 +192,21 @@ curl -X POST http://localhost:9068/v1/chat/completions \
 
 ---
 
-## Technologies Used
+## Skills Demonstrated
 
-- Python
+- Dataset Creation
+- Prompt Engineering
+- Instruction Tuning
+- LoRA Fine-Tuning
+- Llama 3.1
 - Hugging Face Datasets
 - Hugging Face Models
-- Llama 3.1 8B
-- Unsloth
-- LoRA Fine-Tuning
-- GGUF
+- GGUF Export
+- Model Quantization
+- GaiaNet Deployment
+- OpenAI-Compatible APIs
 - WasmEdge
 - LlamaEdge
-- GaiaNet
-- GitHub
-- Google Colab
 
 ---
 
@@ -179,11 +215,34 @@ curl -X POST http://localhost:9068/v1/chat/completions \
 ```text
 .
 ├── chemistry-by-chapter.txt
-├── generate_valid_questions.py
 ├── politics.txt
 ├── finetune.json
-└── README.md
+├── generate_valid_questions.py
+├── README.md
+│
+├── docs
+│   ├── deployment_guide.md
+│   └── training_notes.md
+│
+├── gaianet
+│   └── sample_config.json
+│
+└── notebooks
+    └── chemistry_validator_finetuning.ipynb
 ```
+
+---
+
+## Project Status
+
+Completed ✅
+
+- Dataset Created
+- Model Fine-Tuned
+- GGUF Models Exported
+- Model Uploaded to Hugging Face
+- Public Deployment Live
+- API Verified
 
 ---
 
@@ -201,7 +260,7 @@ https://huggingface.co/datasets/thkaybee/chemistry-validator-dataset
 
 https://huggingface.co/thkaybee/chemistry-validator-llama
 
-### Deployment
+### Public Deployment
 
 https://0x225c8b3c4525e6e06fc0e50d2f90d7e8731ecc7e.gaia.domains
 
