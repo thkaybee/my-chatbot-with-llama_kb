@@ -1,0 +1,12 @@
+{
+  "chat": "https://huggingface.co/thkaybee/chemistry-validator-llama/resolve/main/meta-llama-3.1-8b.Q4_K_M.gguf",
+  "chat_batch_size": "128",
+  "chat_ctx_size": "4096",
+  "description": "Chemistry Validator LLM",
+  "embedding": "https://huggingface.co/gaianet/Nomic-embed-text-v1.5-Embedding-GGUF/resolve/main/nomic-embed-text-v1.5.f16.gguf",
+  "embedding_batch_size": "8192",
+  "embedding_ctx_size": "8192",
+  "llamaedge_port": "8080",
+  "prompt_template": "llama-3-chat",
+  "system_prompt": "Determine if the input is a question related to chemical science. If it is, return a JSON object with valid=true. Otherwise return valid=false and a reason."
+}
